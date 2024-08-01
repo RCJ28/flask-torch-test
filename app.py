@@ -40,14 +40,15 @@ def serve_manifest():
 
 def process_image(img):
     try:
-        image_path = img
-        onnx_model_path = "./best.onnx"
-        classes = ['pothole'] 
- 
-        result_image = detect_boxes.predict_with_onnx(image_path, onnx_model_path, classes)
-        result_image = cv2.cvtColor(result_image, cv2.COLOR_RGB2BGR)
+        model_path = "./pothole_model.pt"
+        model = detect_boxes.load_model(model_path)
 
-        return result_image
+
+        image = cv2.imread('./input.jpg')
+        results = model(image)
+
+        img,count = detect_boxes.draw_boxes(results,image,model.names)
+        return img
     
     except Exception:
         print('Error Occurred')
